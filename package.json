@@ -1,0 +1,20 @@
+{
+  "name": "backend_ti41",
+  "version": "1.0.0",
+  "description": "este es el backend",
+  "license": "MIT",
+  "author": "Cesar Sachez",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --watch app/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mariadb": "^3.4.0",
+    "mysql2": "^3.12.0",
+    "sequelize": "^6.37.5"
+  }
+}
