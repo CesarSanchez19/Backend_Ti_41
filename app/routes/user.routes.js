@@ -62,5 +62,84 @@ export class UserRoutes {
         res.status(500).send({ ok: false, message: "Error al crear usuarios" }); // Envía un mensaje de error con un estado 500
       }
     });
+    // Ruta POST para eliminar un usuario
+    app.post("/delete-user", async (req, res) => {
+      const { condition } = req.body; // Desestructura el cuerpo de la solicitud para obtener 'condition'
+
+      try {
+        // Buscar el usuario antes de eliminarlo usando la condición
+        const user = await UserModel.findOne({
+          where: condition, // Filtra por la condición que se pasa en el cuerpo
+        });
+
+        if (!user) {
+          return res.status(404).send({ ok: false, message: "Usuario no encontrado" }); // Si el usuario no existe
+        }
+
+        // Eliminar el usuario de la base de datos
+        await UserModel.destroy({
+          where: condition,
+        });
+
+        // Responder con los datos del usuario eliminado
+        res.status(200).send({
+          ok: true,
+          data: [
+            {
+              id: user.id,
+              name: user.name,
+              password: user.password,
+              created_at: user.created_at,
+            },
+          ],
+        });
+      } catch (error) {
+        // Si ocurre un error al eliminar el usuario
+        console.error("Error al eliminar usuario:", error);
+        res.status(500).send({ ok: false, message: "Error al eliminar usuario" });
+      }
+    });
+    // Ruta POST para actualizar un usuario
+    app.post("/update-user", async (req, res) => {
+      const { condition, user } = req.body; // Desestructura el cuerpo de la solicitud para obtener 'condition' y 'user'
+
+      try {
+        // Buscar el usuario antes de actualizarlo usando la condición
+        const existingUser = await UserModel.findOne({
+          where: condition, // Filtra por la condición que se pasa en el cuerpo
+        });
+
+        if (!existingUser) {
+          return res.status(404).send({ ok: false, message: "Usuario no encontrado" }); // Si el usuario no existe
+        }
+
+        // Actualizar el usuario con los nuevos datos
+        await UserModel.update(user, {
+          where: condition,
+        });
+
+        // Obtener los datos actualizados del usuario
+        const updatedUser = await UserModel.findOne({
+          where: condition,
+        });
+
+        // Responder con los datos actualizados del usuario
+        res.status(200).send({
+          ok: true,
+          data: [
+            {
+              id: updatedUser.id,
+              name: updatedUser.name,
+              password: updatedUser.password,
+              created_at: updatedUser.created_at,
+            },
+          ],
+        });
+      } catch (error) {
+        // Si ocurre un error al actualizar el usuario
+        console.error("Error al actualizar usuario:", error);
+        res.status(500).send({ ok: false, message: "Error al actualizar usuario" });
+      }
+    });
   }
 }
