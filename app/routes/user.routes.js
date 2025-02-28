@@ -31,21 +31,24 @@ export class UserRoutes {
       res.status(200).send(`Hello ${user}, you are awesome`); // Envía una respuesta personalizada con el nombre del usuario
     });
 
-    // Ruta POST para obtener usuarios según una condición
-    app.post("/get-users", async (req, res) => {
-      const { condition } = req.body; // Desestructura el cuerpo de la solicitud para obtener 'condition'
-      console.log("condition", condition); // Muestra la condición en la consola
+    // Obtener usuario
+    app.post("/get-user", async (req, res) => {
       try {
-        // Intenta buscar todos los usuarios que coincidan con la condición
-        const users = await UserModel.findAll({
-          where: condition, // Filtra los usuarios según la condición proporcionada
+        const { condition } = req.body;
+        console.log("Condition", condition);
+
+        const user = await UserModel.findAll({
+          where: condition,
         });
-        console.log("users", users); // Muestra los usuarios encontrados en la consola
-        res.status(200).send({ ok: true, data: users }); // Envía la lista de usuarios como respuesta
+
+        if (user.length > 0) {
+          res.status(200).send({ ok: true, data: user });
+        } else {
+          res.status(200).send({ ok: false, message: "Usuario no encontrado" });
+        }
       } catch (error) {
-        // Si ocurre un error al buscar usuarios
-        console.error("Error al obtener usuarios:", error); // Muestra el error en la consola
-        res.status(500).send({ ok: false, message: "Error al obtener usuarios" }); // Envía un mensaje de error con un estado 500
+        console.error("Error", error);
+        res.status(500).send({ ok: false, message: "Internal server error" });
       }
     });
 
